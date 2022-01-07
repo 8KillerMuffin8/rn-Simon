@@ -1,5 +1,6 @@
+import {useFocusEffect} from '@react-navigation/core';
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {I18nManager, StyleSheet, View} from 'react-native';
+import {BackHandler, I18nManager, StyleSheet, View} from 'react-native';
 import Sound from 'react-native-sound';
 import {Context as GameContext} from '../context/GameContext';
 import GameButton from './GameButton';
@@ -45,6 +46,7 @@ const GameContainer = ({navigation}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [disabled, setDisabled] = useState(false); // state var to disable buttons when not playing or computer sequence is playing
   const [startButtonDisabled, setStartButtonDisabled] = useState(false); // state var to disable the start button when playing
+  const [canGoBack, setCanGoBack] = useState(false); // state var to disable the hardware back button during game
 
   //validate every time user presses
 
@@ -86,6 +88,7 @@ const GameContainer = ({navigation}) => {
   };
 
   const playButtonPressed = () => {
+    setCanGoBack(false)
     navigation.setOptions({tabBarVisible: false});
     setStartButtonDisabled(true);
     countDown(() => {
@@ -152,6 +155,20 @@ const GameContainer = ({navigation}) => {
     }
   }, [isPlaying]);
 
+  useEffect(() => {}, [canGoBack]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', () => {
+        return canGoBack;
+      });
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', () => {
+          return canGoBack;
+        });
+    }, [canGoBack]),
+  );
+
   //animate the simon sequence
 
   useEffect(() => {
@@ -176,6 +193,7 @@ const GameContainer = ({navigation}) => {
   };
 
   const didLose = () => {
+    setCanGoBack(true)
     setPlayerSequence([]);
     setComputerSequence([]);
     setCurrentIndex(0);
