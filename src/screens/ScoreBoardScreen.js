@@ -23,7 +23,7 @@ const ScoreBoardScreen = () => {
         <Text>{item.index + 1}</Text>
       </View>
     ) : (
-      <View style={{flexDirection: 'row'}}>
+      <View style={styles.itemWrapper}>
         <Text>{item.index + 1}</Text>
         <View style={styles.itemTextWrapper}>
           <>
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   itemWrapper: {
     flexDirection: 'row',
-    height: 50,
+    height: 65,
     justifyContent: 'center',
     alignItems: 'center',
   },

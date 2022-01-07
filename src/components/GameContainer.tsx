@@ -46,7 +46,9 @@ const GameContainer = ({navigation}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [disabled, setDisabled] = useState(false); // state var to disable buttons when not playing or computer sequence is playing
   const [startButtonDisabled, setStartButtonDisabled] = useState(false); // state var to disable the start button when playing
-  const [canGoBack, setCanGoBack] = useState(false); // state var to disable the hardware back button during game
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  var computerSequenceTimer;
+  var countDownTimer;
 
   //validate every time user presses
 
@@ -88,12 +90,12 @@ const GameContainer = ({navigation}) => {
   };
 
   const playButtonPressed = () => {
-    setCanGoBack(false)
     navigation.setOptions({tabBarVisible: false});
     setStartButtonDisabled(true);
+    setDisabled(true);
+    setIsPlaying(true);
     countDown(() => {
       setScore(0);
-      setIsPlaying(true);
       setCurrentIndex(0);
       setComputerSequence([generateRandomDigit()]);
       setPlayerSequence([]);
@@ -101,15 +103,14 @@ const GameContainer = ({navigation}) => {
     });
   };
 
-  // useEffect(() => {
-  // }, [state.score])
-
   const countDown = callback => {
     let time = 3;
-    let countdown = setInterval(() => {
+    setIsCountingDown(true);
+    countDownTimer = setInterval(() => {
       if (time === 0) {
         callback();
-        clearInterval(countdown);
+        setIsCountingDown(false);
+        clearInterval(countDownTimer);
       } else {
         time -= 1;
         startAnim();
@@ -123,20 +124,29 @@ const GameContainer = ({navigation}) => {
     let timer = setInterval(() => {
       switch (index) {
         case 4:
-          greenRef.current.virtualPressNoSound();
+          if (greenRef.current) {
+            greenRef.current.virtualPressNoSound();
+          }
           index -= 1;
           break;
         case 3:
           index -= 1;
-          redRef.current.virtualPressNoSound();
+          if (redRef.current) {
+            redRef.current.virtualPressNoSound();
+          }
           break;
         case 2:
           index -= 1;
-          yellowRef.current.virtualPressNoSound();
+          if (yellowRef.current) {
+            yellowRef.current.virtualPressNoSound();
+          }
+
           break;
         case 1:
           index -= 1;
-          blueRef.current.virtualPressNoSound();
+          if (blueRef.current) {
+            blueRef.current.virtualPressNoSound();
+          }
           break;
         case 0:
           clearInterval(timer);
@@ -147,27 +157,23 @@ const GameContainer = ({navigation}) => {
   useEffect(() => {
     if (isPlaying) {
       setScore(0);
-      setDisabled(false);
       setStartButtonDisabled(true);
     } else {
       setDisabled(true);
       setStartButtonDisabled(false);
     }
-  }, [isPlaying]);
-
-  useEffect(() => {}, [canGoBack]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      BackHandler.addEventListener('hardwareBackPress', () => {
-        return canGoBack;
-      });
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', () => {
-          return canGoBack;
-        });
-    }, [canGoBack]),
-  );
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      if (isPlaying) {
+        if (isCountingDown) {
+        } else {
+          didLose();
+        }
+      } else {
+        BackHandler.exitApp();
+      }
+      return true;
+    });
+  }, [isPlaying, isCountingDown]);
 
   //animate the simon sequence
 
@@ -193,7 +199,6 @@ const GameContainer = ({navigation}) => {
   };
 
   const didLose = () => {
-    setCanGoBack(true)
     setPlayerSequence([]);
     setComputerSequence([]);
     setCurrentIndex(0);
@@ -209,25 +214,33 @@ const GameContainer = ({navigation}) => {
   function playComputerSequence(sequence) {
     setDisabled(true);
     var index = 0;
-    var interval = window.setInterval(function () {
+    computerSequenceTimer = setInterval(() => {
       let num = sequence[index];
       switch (num) {
         case 0:
-          greenRef.current.virtualPress();
+          if (greenRef.current) {
+            greenRef.current.virtualPress();
+          }
           break;
         case 1:
-          redRef.current.virtualPress();
+          if (redRef.current) {
+            redRef.current.virtualPress();
+          }
           break;
         case 2:
-          blueRef.current.virtualPress();
+          if (blueRef.current) {
+            blueRef.current.virtualPress();
+          }
           break;
         case 3:
-          yellowRef.current.virtualPress();
+          if (yellowRef.current) {
+            yellowRef.current.virtualPress();
+          }
           break;
       }
 
       if (++index === sequence.length) {
-        window.clearInterval(interval);
+        clearInterval(computerSequenceTimer);
       }
       if (index === sequence.length) {
         setDisabled(false);
@@ -246,16 +259,16 @@ const GameContainer = ({navigation}) => {
 
   const buttonPressed = pos => {
     switch (pos) {
-      case 0: // GREEN : TOP LEFT
+      case 0: // GREEN
         setPlayerSequence([...playerSequence, 0]);
         break;
-      case 1: // RED : TOP RIGHT
+      case 1: // RED
         setPlayerSequence([...playerSequence, 1]);
         break;
-      case 2: //BLUE : BOTTOM LEFT
+      case 2: //BLUE
         setPlayerSequence([...playerSequence, 2]);
         break;
-      case 3: //YELLOW : BOTTOM RIGHT
+      case 3: //YELLOW
         setPlayerSequence([...playerSequence, 3]);
         break;
     }
