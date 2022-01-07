@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "546510394419",
+    "firebase_url": "https://simon-says-db-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "simon-says-db",
+    "storage_bucket": "simon-says-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546510394419:android:8554854e4ba4be40f4ff46",
+        "android_client_info": {
+          "package_name": "com.giladsays"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "546510394419-hd5kchcu9978hakb5m1g0hshqir68ng9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbfAJ6MrV_iBLqzUIPDDJ8_2Xg-aRETT8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "546510394419-hd5kchcu9978hakb5m1g0hshqir68ng9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
