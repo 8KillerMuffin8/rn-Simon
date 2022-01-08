@@ -16,8 +16,11 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {addScore, getScores} from '../redux/Actions';
 import {navigate} from './RootNavigation';
+import {useColorScheme} from 'react-native';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const WinModal = ({}, ref) => {
+  const isDarkMode = useColorScheme() === 'dark';
   const {score} = useSelector(state => state.gameReducer);
   const {scores} = useSelector(state => state.scoreboardReducer);
   const dispatch = useDispatch();
@@ -45,6 +48,15 @@ const WinModal = ({}, ref) => {
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const modalWrapperStyle = {
+    width: '75%',
+    height: '60%',
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   };
 
   const inputStyle = {
@@ -119,14 +131,14 @@ const WinModal = ({}, ref) => {
         />
         {scores.length != 0 ? (
           score > scores[scores.length - 1].score ? (
-            <View style={styles.modalWrapper}>
+            <View style={modalWrapperStyle}>
               {closeBtn()}
               {scoreText()}
               {input()}
               {submitButton()}
             </View>
           ) : (
-            <View style={styles.modalWrapper}>
+            <View style={modalWrapperStyle}>
               {closeBtn()}
               <Text style={styles.failText}>
                 You did not make it to the top ten
@@ -140,14 +152,6 @@ const WinModal = ({}, ref) => {
 };
 
 const styles = StyleSheet.create({
-  modalWrapper: {
-    width: '75%',
-    height: '60%',
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   modal: {
     position: 'absolute',
     top: 0,

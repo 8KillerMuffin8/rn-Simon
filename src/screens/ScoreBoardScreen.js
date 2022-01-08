@@ -3,12 +3,22 @@ import {I18nManager, StyleSheet, Text, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
 import {getScores} from '../redux/Actions';
+import {useColorScheme} from 'react-native';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const ScoreBoardScreen = () => {
+  const isDarkMode = useColorScheme() === 'dark';
   const {scores} = useSelector(state => state.scoreboardReducer);
   const dispatch = useDispatch();
 
   const isRtl = I18nManager.isRTL;
+
+  const mainContainerStyle = {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
 
   useEffect(() => {
     dispatch(getScores());
@@ -55,7 +65,7 @@ const ScoreBoardScreen = () => {
   };
 
   return (
-    <View style={styles.mainContainer}>
+    <View style={mainContainerStyle}>
       {title()}
       <FlatList
         style={{width: '100%'}}
@@ -71,11 +81,6 @@ const ScoreBoardScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
   itemWrapper: {
     flexDirection: 'row',
     height: 65,

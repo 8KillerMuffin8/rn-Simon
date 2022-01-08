@@ -21,7 +21,10 @@ const App = () => {
 
   const TabNavigator = () => {
     return (
-      <Tab.Navigator>
+      <Tab.Navigator
+        tabBarOptions={{
+          style: {backgroundColor: isDarkMode ? Colors.darker : Colors.lighter},
+        }}>
         <Tab.Screen
           name="Game"
           component={GameScreen}
