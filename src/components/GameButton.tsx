@@ -1,11 +1,5 @@
-import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Animated,
-} from 'react-native';
+import React, {forwardRef, useImperativeHandle, useRef} from 'react';
+import {Animated, Pressable, StyleSheet, View} from 'react-native';
 
 const width = 50;
 const size = 150;
@@ -18,10 +12,10 @@ const GameButton = ({tintColor, onPress, rotate, sound, disabled}, ref) => {
 
   useImperativeHandle(ref, () => ({
     virtualPress: () => {
-      virtualPress();
+      virtualPress(); // virtual press for simon sequence
     },
     virtualPressNoSound: () => {
-      virtualPressNoSound();
+      virtualPressNoSound(); //virtual press for start anim
     },
   }));
 

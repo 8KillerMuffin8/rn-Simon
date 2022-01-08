@@ -1,6 +1,5 @@
 import React, {
   forwardRef,
-  useContext,
   useEffect,
   useImperativeHandle,
   useState,
@@ -14,14 +13,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Context as GameContext} from '../context/GameContext';
-import {Context as ScoreboardContext} from '../context/ScoreboardContext';
+import {useDispatch, useSelector} from 'react-redux';
+import {addScore, getScores} from '../redux/Actions';
 import {navigate} from './RootNavigation';
 
 const WinModal = ({}, ref) => {
-  const {state} = useContext(GameContext);
-  const {addScore, getScores} = useContext(ScoreboardContext);
-
+  const {score} = useSelector(state => state.gameReducer);
+  const {scores} = useSelector(state => state.scoreboardReducer);
+  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState('');
   const [inputColor, setInputColor] = useState('#3f3f3f');
@@ -31,6 +30,8 @@ const WinModal = ({}, ref) => {
       setModalVisible(true);
     },
   }));
+
+  // resets the name when modal dissapeard or reappears
 
   useEffect(() => {
     setName('');
@@ -76,7 +77,7 @@ const WinModal = ({}, ref) => {
     return (
       <>
         <Text>You Lost with the score</Text>
-        <Text style={styles.score}>{state.score}</Text>
+        <Text style={styles.score}>{score}</Text>
       </>
     );
   };
@@ -84,7 +85,7 @@ const WinModal = ({}, ref) => {
   const onSubmit = () => {
     if (name.length != 0) {
       setModalVisible(false);
-      addScore(name, state.score, () => getScores());
+      dispatch(addScore(name, score, () => dispatch(getScores())));
       navigate('ScoreBoard');
     } else {
       setInputColor('#ff0f2b');
@@ -116,12 +117,23 @@ const WinModal = ({}, ref) => {
             setModalVisible(false);
           }}
         />
-        <View style={styles.modalWrapper}>
-          {closeBtn()}
-          {scoreText()}
-          {input()}
-          {submitButton()}
-        </View>
+        {scores.length != 0 ? (
+          score > scores[scores.length - 1].score ? (
+            <View style={styles.modalWrapper}>
+              {closeBtn()}
+              {scoreText()}
+              {input()}
+              {submitButton()}
+            </View>
+          ) : (
+            <View style={styles.modalWrapper}>
+              {closeBtn()}
+              <Text style={styles.failText}>
+                You did not make it to the top ten
+              </Text>
+            </View>
+          )
+        ) : null}
       </View>
     </Modal>
   );
@@ -169,6 +181,10 @@ const styles = StyleSheet.create({
     top: 10,
     right: 15,
     transform: [{scaleX: 1.2}],
+  },
+  failText: {
+    textAlign: 'center',
+    fontSize: 20,
   },
 });
 

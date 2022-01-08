@@ -1,8 +1,8 @@
-import {useFocusEffect} from '@react-navigation/core';
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {BackHandler, I18nManager, StyleSheet, View} from 'react-native';
 import Sound from 'react-native-sound';
-import {Context as GameContext} from '../context/GameContext';
+import {useDispatch, useSelector} from 'react-redux';
+import {setScore, setStartText, getScores} from '../redux/Actions';
 import GameButton from './GameButton';
 import StartButton from './StartButton';
 import WinModal from './WinModal';
@@ -21,7 +21,8 @@ var winSound = new Sound('correct.mp3', Sound.MAIN_BUNDLE).setVolume(0.1);
 var loseSound = new Sound('incorrect.mp3', Sound.MAIN_BUNDLE).setVolume(0.1);
 
 const GameContainer = ({navigation}) => {
-  const {state, setScore, setStartText} = useContext(GameContext);
+  const {score} = useSelector(state => state.gameReducer);
+  const dispatch = useDispatch();
 
   /*
     button ref to press virtually (for the computer sequence)
@@ -59,7 +60,7 @@ const GameContainer = ({navigation}) => {
      if they are we increment the index
      if the computer sequence length IS equal to the player sequence length we check one final time that the 
      numbers at the final index are equal, if they are it's a win if theyre not it's a loss
-     fucking rocket sience
+     fucking rocket science
   */
 
   const validate = () => {
@@ -89,19 +90,29 @@ const GameContainer = ({navigation}) => {
     return Math.floor(Math.random() * 4);
   };
 
+  //Loading the scoreboard on app start
+
+  useEffect(() => {
+    dispatch(getScores())
+  }, [])
+
+  //handling game start
+
   const playButtonPressed = () => {
     navigation.setOptions({tabBarVisible: false});
     setStartButtonDisabled(true);
     setDisabled(true);
     setIsPlaying(true);
     countDown(() => {
-      setScore(0);
+      dispatch(setScore(0));
       setCurrentIndex(0);
       setComputerSequence([generateRandomDigit()]);
       setPlayerSequence([]);
-      setStartText(0);
+      dispatch(setStartText('0'));
     });
   };
+
+  //countdown for start anim
 
   const countDown = callback => {
     let time = 3;
@@ -114,7 +125,7 @@ const GameContainer = ({navigation}) => {
       } else {
         time -= 1;
         startAnim();
-        setStartText(time + 1);
+        dispatch(setStartText(`${time + 1}`));
       }
     }, 1000);
   };
@@ -154,9 +165,11 @@ const GameContainer = ({navigation}) => {
     }, 250);
   };
 
+  //Handling the hardware back button during a game
+
   useEffect(() => {
     if (isPlaying) {
-      setScore(0);
+      dispatch(setScore(0));
       setStartButtonDisabled(true);
     } else {
       setDisabled(true);
@@ -190,8 +203,8 @@ const GameContainer = ({navigation}) => {
   }, [playerSequence]);
 
   const didWin = () => {
-    setScore(state.score + 1);
-    setStartText(state.score + 1);
+    dispatch(setScore(score + 1));
+    dispatch(setStartText(`${score + 1}`));
     setPlayerSequence([]);
     setCurrentIndex(0);
     setComputerSequence([...computerSequence, generateRandomDigit()]);
@@ -205,7 +218,7 @@ const GameContainer = ({navigation}) => {
     setIsPlaying(false);
     navigation.setOptions({tabBarVisible: true});
     modalRef.current.openModal();
-    setStartText('Start');
+    dispatch(setStartText('Start'));
     loseSound.play();
   };
 

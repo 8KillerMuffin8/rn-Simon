@@ -1,14 +1,17 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {I18nManager, StyleSheet, Text, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {Context} from '../context/ScoreboardContext';
+import {useDispatch, useSelector} from 'react-redux';
+import {getScores} from '../redux/Actions';
 
 const ScoreBoardScreen = () => {
-  const {state, getScores} = useContext(Context);
+  const {scores} = useSelector(state => state.scoreboardReducer);
+  const dispatch = useDispatch();
+
   const isRtl = I18nManager.isRTL;
 
   useEffect(() => {
-    getScores();
+    dispatch(getScores());
   }, []);
 
   const renderItem = item => {
@@ -57,7 +60,7 @@ const ScoreBoardScreen = () => {
       <FlatList
         style={{width: '100%'}}
         scrollEnabled
-        data={state.scores}
+        data={scores}
         keyExtractor={(_, index) => index}
         renderItem={renderItem}
         ItemSeparatorComponent={itemSeparatorComponent}

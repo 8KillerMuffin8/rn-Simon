@@ -1,16 +1,16 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {Context} from '../context/GameContext';
+import {useSelector} from 'react-redux';
 
 const StartButton = ({onPress, disabled}) => {
-  const {state} = useContext(Context);
+  const {startText} = useSelector(state => state.gameReducer);
 
   return (
     <TouchableOpacity
       disabled={disabled}
       style={styles.startButton}
       onPress={onPress}>
-      <Text style={styles.text}>{state.startText}</Text>
+      <Text style={styles.text}>{startText}</Text>
     </TouchableOpacity>
   );
 };

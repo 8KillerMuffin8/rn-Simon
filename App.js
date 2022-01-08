@@ -4,10 +4,10 @@ import React from 'react';
 import {Image, SafeAreaView, StatusBar, useColorScheme} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {isReadyRef, navigationRef} from './src/components/RootNavigation';
-import {Provider as GameProvider} from './src/context/GameContext';
-import {Provider as ScoreboardProvider} from './src/context/ScoreboardContext';
 import GameScreen from './src/screens/GameScreen';
 import ScoreBoardScreen from './src/screens/ScoreBoardScreen';
+import {Provider} from 'react-redux';
+import {Store} from './src/redux/Store';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -65,22 +65,18 @@ const App = () => {
   };
 
   return (
-    <GameProvider>
-      <ScoreboardProvider>
-        <NavigationContainer
-          ref={navigationRef}
-          onReady={() => {
-            isReadyRef.current = true;
-          }}>
-          <SafeAreaView style={backgroundStyle}>
-            <StatusBar
-              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-            />
-            {TabNavigator()}
-          </SafeAreaView>
-        </NavigationContainer>
-      </ScoreboardProvider>
-    </GameProvider>
+    <Provider store={Store}>
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() => {
+          isReadyRef.current = true;
+        }}>
+        <SafeAreaView style={backgroundStyle}>
+          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+          {TabNavigator()}
+        </SafeAreaView>
+      </NavigationContainer>
+    </Provider>
   );
 };
 
