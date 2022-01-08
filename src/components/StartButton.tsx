@@ -2,7 +2,12 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
 
-const StartButton = ({onPress, disabled}) => {
+interface StartButtonProps {
+  onPress: any;
+  disabled: boolean;
+}
+
+const StartButton = ({onPress, disabled}: StartButtonProps) => {
   const {startText} = useSelector(state => state.gameReducer);
 
   return (

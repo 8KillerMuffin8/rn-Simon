@@ -344,7 +344,6 @@ const GameContainer = ({navigation}) => {
       {ButtonContainer()}
       <StartButton
         disabled={startButtonDisabled}
-        isPlaying={isPlaying}
         onPress={() => playButtonPressed()}
       />
     </>

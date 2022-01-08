@@ -4,7 +4,18 @@ import {Animated, Pressable, StyleSheet, View} from 'react-native';
 const width = 50;
 const size = 150;
 
-const GameButton = ({tintColor, onPress, rotate, sound, disabled}, ref) => {
+interface GameButtonProps {
+  tintColor: String;
+  onPress: any;
+  rotate: String;
+  sound: Object;
+  disabled: boolean;
+}
+
+const GameButton = (
+  {tintColor, onPress, rotate, sound, disabled}: GameButtonProps,
+  ref,
+) => {
   const itemScale = useRef(new Animated.Value(1)).current;
   const animDuration = 50;
 
